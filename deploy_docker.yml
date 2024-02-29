@@ -1,0 +1,62 @@
+- name: Deploying Apache container
+  hosts: webserver
+  become: true
+
+  tasks:
+    - name: Install Docker On Host Machine
+      apt: 
+        name: docker.io
+        state: present
+
+    - name: Starting Docker Service 
+      service: 
+        name: docker
+        state: started 
+
+    - name: Cretaing Custom Docker Network
+      docker_network:
+        name: my_custom_network
+        ipam_config:
+          - subnet: "172.168.10.0/30" 
+        state: present      
+
+    - name: Pulling Apache Docker Image 
+      docker_image: 
+       name: httpd
+       source: pull
+       state: present 
+
+    - name: Creating Apache container
+      docker_container:
+        name: apache_container
+        image: httpd
+        state: started 
+        ports:
+          - "80:80"    
+        
+        # copy:
+        #   src: /Users/eashan/Downloads/networking/html/index.html
+        #   dest: /usr/local/apache2/htdocs/
+
+        networks:
+          - name: my_custom_network
+
+
+  handlers:
+     - name: Stop And Start Apache Container
+       docker_container:
+        name: apache_container
+        state: stopped
+       async: 1
+       poll: 0
+
+     - name: Waiting for Apache Container To Start 
+       wait_for:
+         port: 80
+         timeout: 30
+         state: started
+
+
+     - name: Copy files into Docker container
+       command: docker cp /Users/eashan/Downloads/networking/html/index.html apache_container:/usr/local/apache2/htdocs/
+       
