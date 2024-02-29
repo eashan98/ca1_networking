@@ -34,10 +34,6 @@
         ports:
           - "80:80"    
         
-        # copy:
-        #   src: /Users/eashan/Downloads/networking/html/index.html
-        #   dest: /usr/local/apache2/htdocs/
-
         networks:
           - name: my_custom_network
 
