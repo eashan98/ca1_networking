@@ -8,6 +8,6 @@ If you want to add a custom change that should rendor when you hit the host or t
 
 inventory.ini consist of host ip and the user through which we can ssh from local to target machine.
 
-command to run playbook :- ansible-playbook -i inventory.ini deploy_docker.yml
+Command to run playbook :- ansible-playbook -i inventory.ini deploy_docker.yml
 
 The host machine ip needs to be change and user need to be changed that can ssh.
